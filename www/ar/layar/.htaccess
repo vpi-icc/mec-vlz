@@ -1,0 +1,6 @@
+# Powered by Zyro
+RewriteEngine Off
+RewriteBase /
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^(.*)$ zyro/$1 [L,QSA]
+

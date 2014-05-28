@@ -1,0 +1,16 @@
+header {
+    height: 50px !important;
+}
+#mini-logo {
+	height: 50px;
+	
+}
+#text-title {
+	margin-top: -15px;
+}
+.content {
+	margin: 100px 10px;
+}
+.thumbnail-preview {
+	max-width: 200px;
+}

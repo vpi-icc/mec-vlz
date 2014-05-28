@@ -1,0 +1,2 @@
+ErrorDocument 404 http://mec-vlz.cmouv.com/404
+AddDefaultCharset UTF-8

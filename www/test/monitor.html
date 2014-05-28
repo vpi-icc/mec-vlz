@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Панель мониторинга МЭК</title>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css">
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+
+    <script src="http://code.highcharts.com/highcharts.js"></script>
+
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div id="chart"></div>
+                <script type="text/javascript">
+
+                    var chart;
+
+                    Highcharts.setOptions({
+                        global: {
+                            useUTC: false
+                        }
+                    });
+
+                    function requestData() {
+                        $.getJSON('/test/grapher.php?sid=1&param=top')
+                            .done( function( json ) {
+                                chart.series[0].setData(json, true);
+                                //alert(chart.series[0].data);
+                                //alert(json[0]);
+                            })
+                            .fail( function( jqxhr, textStatus, error ) {
+                                var err = textStatus + ", " + error;
+                                console.log( "Request Failed: " + err );
+                            });
+                        // call it again after one second
+                        //setTimeout(requestData, 1000);
+                    }
+
+
+                    chart = new Highcharts.Chart({
+                        chart: {
+                            renderTo: 'chart',
+                            defaultSeriesType: 'spline',
+                            events: {
+                                load: requestData
+                            }
+                        },
+                        title: {
+                            text: 'Live random data'
+                        },
+                        xAxis: {
+                            type: 'datetime',
+                            tickPixelInterval: 150,
+                            labels: {
+                                format: '{value:%H:%M}'
+                            }
+                        },
+                        yAxis: {
+                            minPadding: 0.2,
+                            maxPadding: 0.2,
+                            title: {
+                                text: 'Value',
+                                margin: 80
+                            }
+                        },
+                        series: [{
+                            name: 'Random data',
+                            data: []
+                        }]
+                    });
+
+/*
+                    $('#graph').highcharts({
+
+                        tooltip: {
+                            pointFormat: "Value: {point.y:,.1f} mm"
+                        },
+
+                        xAxis: {
+                            type: 'datetime',
+                            labels: {
+                                format: '{value:%H:%M:%S}',
+                                //rotation: 0,
+                                //align: 'left'
+                            }
+                        },
+
+                        series: [{
+                            data: data,
+                            //pointStart: Date.UTC(2013, 0, 1),
+                            //pointInterval: 24 * 36e5
+                        }]
+                    });
+*/
+
+                </script>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
