@@ -15,12 +15,13 @@
         exit();
     }
 
+/*
     if ( empty($_GET['sid']) )
     {
         echo 'No session identifier specified';
         exit();
     }
-
+*/
     if ( empty($_GET['param']) )
     {
         echo 'No param specified';
@@ -29,8 +30,8 @@
 
     $query = "
         SELECT UNIX_TIMESTAMP(TS) AS TS, " . $_GET['param'] . "
-        FROM indicators
-        WHERE sid = " . $_GET['sid'];
+        FROM indications";
+
 
     $stmt = $pdo->query($query);
 

@@ -2,7 +2,7 @@
 
     require_once "config.php";
 
-    $input_params = array('ts', 'trv', 'top', 'sbop', 'bcl');
+    $input_params = array('ts', 'trv', 'top', 'sbop', 'bcl', 'lat', 'lon');
 
     function get_message(array $in_params)
     {
@@ -16,6 +16,7 @@
         return $data;
     }
 
+/*
     function get_last_session_id($pdo)
     {
         $query = "
@@ -28,6 +29,7 @@
         $id = $stmt->fetch(PDO::FETCH_NUM);
         return $id[0];
     }
+*/
 
     try {
         $pdo = new PDO($dsn, $dbuser, $dbpass);
@@ -39,6 +41,7 @@
 	if ( count($_GET) > 0 )
 	{
         $res = "Invalid params format";
+        /*
 		if ( isset($_GET['session']) && !empty($_GET['lat']) && !empty($_GET['lon']) )
         {
             $query = "
@@ -48,16 +51,17 @@
             $pdo->exec($query);
             $res = implode(' ', $pdo->errorInfo());
         }
-        else if ( $data = get_message($input_params) )
+        */
+        if ( $data = get_message($input_params) )
         {
-            $sid = get_last_session_id($pdo);
+            //$sid = get_last_session_id($pdo);
 
             $query = "
-                INSERT INTO indicators (TS, sid, TRV, TOP, SBOP, BCL)
-                VALUES (:ts, :sid, :trv, :top, :sbop, :bcl)";
+                INSERT INTO indications (TS, TRV, TOP, SBOP, BCL, lat, lon)
+                VALUES (:ts, :trv, :top, :sbop, :bcl, :lat, :lon)";
 
             $stmt = $pdo->prepare($query);
-            $stmt->bindValue(':sid', $sid);
+            //$stmt->bindValue(':sid', $sid);
             //$stmt->bindValue(':ts', date('Y-m-d H:i:s', $data['ts']) );
             //unset($data['ts']);
             $data['ts'] = date('Y-m-d H:i:s', $data['ts']);
