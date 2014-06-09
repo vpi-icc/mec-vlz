@@ -30,7 +30,9 @@
 
     $query = "
         SELECT UNIX_TIMESTAMP(TS) AS TS, " . $_GET['param'] . "
-        FROM indications";
+        FROM indications
+        WHERE TS > NOW() - INTERVAL 1 HOUR
+        ORDER BY TS";
 
 
     $stmt = $pdo->query($query);

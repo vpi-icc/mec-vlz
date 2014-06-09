@@ -2,7 +2,7 @@
 
     require_once "config.php";
 
-    $input_params = array('ts', 'trv', 'top', 'sbop', 'bcl', 'lat', 'lon');
+    $input_params = array('date', 'time', 'trv', 'top', 'sbop', 'bcl', 'lat', 'lon');
 
     function get_message(array $in_params)
     {
@@ -62,17 +62,29 @@
 
             $stmt = $pdo->prepare($query);
             //$stmt->bindValue(':sid', $sid);
-            //$stmt->bindValue(':ts', date('Y-m-d H:i:s', $data['ts']) );
-            //unset($data['ts']);
-            $data['ts'] = date('Y-m-d H:i:s', $data['ts']);
+            //$datetime = DateTime::createFromFormat('YmdHis', $data['date'] . $data['time']);
+
+            $response_token = $data['time'];
+            list($Y, $m, $d, $H, $i, $s) = sscanf($data['date'] . $data['time'], "%4s%2s%2s%2s%2s%2s");
+            unset($data['date'], $data['time']);
+            //$data['ts'] = $datetime->getTimestamp();
+            //$data['ts'] = $datetime->format('Y-m-d H:i:s');
+
+            $data['ts'] = sprintf("%4s-%2s-%2s %2s:%2s:%2s", $Y, $m, $d, $H, $i, $s);
+
             $params = array_keys($data);
             foreach ( $params as $p )
                 $stmt->bindValue(':' . $p, $data[$p]);
 
+            $query = "SET time_zone = '+00:00'";
+            $pdo->exec($query);
+
             $stmt->execute();
 
-            $res = implode(' ', $stmt->errorInfo());
+            if ( $stmt->errorCode() !== '00000' )
+                $res = "error";
+            else $res = 'ok' . $response_token;
         }
 	}
-	else $res = "No params";
+	else $res = "error";
 	echo $res;

@@ -39,12 +39,19 @@ curl_setopt($ch, CURLOPT_RETURNTRANSFER, 0);
 curl_exec($ch);
 */
 
-$n = rand(50, 100);
+//$n = rand(50, 100);
+
+
+date_default_timezone_set('UTC');
+
+$n = 1;
 
 for ( $i = 0; $i <= $n; $i++ )
 {
+    $ts = time() + $i * 60;
     $data = array(
-        'ts' => time() + $i * 60,
+        'date' => date("Ymd", $ts),
+        'time' => date("His", $ts),
         'trv' => rand(30, 100) + rand(0, 100) / 100, // turbine rotating velocity, RPM
         'top' => rand(20, 50) + rand(0, 100) / 100, // turbine output power, Watt
         'sbop' => rand(5, 20) + rand(0, 100) / 100, // solar battery output power, Watt
