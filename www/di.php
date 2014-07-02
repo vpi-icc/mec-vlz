@@ -2,7 +2,7 @@
 
     require_once "config.php";
 
-    $input_params = array('date', 'time', 'trv', 'top', 'sbop', 'bcl', 'lat', 'lon');
+    $input_params = array('date', 'time', 'trv', 'wtop', 'sbop', 'bcl', 'lat', 'lon');
 
     function get_message(array $in_params)
     {
@@ -57,20 +57,20 @@
             //$sid = get_last_session_id($pdo);
 
             $query = "
-                INSERT INTO indications (TS, TRV, TOP, SBOP, BCL, lat, lon)
-                VALUES (:ts, :trv, :top, :sbop, :bcl, :lat, :lon)";
+                INSERT INTO indications (TS, TRV, WTOP, SBOP, BCL, lat, lon)
+                VALUES (:ts, :trv, :wtop, :sbop, :bcl, :lat, :lon)";
 
             $stmt = $pdo->prepare($query);
             //$stmt->bindValue(':sid', $sid);
             //$datetime = DateTime::createFromFormat('YmdHis', $data['date'] . $data['time']);
 
             $response_token = $data['time'];
-            list($Y, $m, $d, $H, $i, $s) = sscanf($data['date'] . $data['time'], "%4s%2s%2s%2s%2s%2s");
+            list($y, $m, $d, $H, $i, $s) = sscanf($data['date'] . $data['time'], "%2s%2s%2s%2s%2s%2s");
             unset($data['date'], $data['time']);
             //$data['ts'] = $datetime->getTimestamp();
             //$data['ts'] = $datetime->format('Y-m-d H:i:s');
 
-            $data['ts'] = sprintf("%4s-%2s-%2s %2s:%2s:%2s", $Y, $m, $d, $H, $i, $s);
+            $data['ts'] = sprintf("20%2s-%2s-%2s %2s:%2s:%2s", $y, $m, $d, $H, $i, $s);
 
             $params = array_keys($data);
             foreach ( $params as $p )

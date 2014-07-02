@@ -44,16 +44,16 @@ curl_exec($ch);
 
 date_default_timezone_set('UTC');
 
-$n = 1;
+$n = 60;
 
-for ( $i = 0; $i <= $n; $i++ )
+for ( $i = -$n; $i <= $n; $i++ )
 {
     $ts = time() + $i * 60;
     $data = array(
-        'date' => date("Ymd", $ts),
+        'date' => date("ymd", $ts),
         'time' => date("His", $ts),
         'trv' => rand(30, 100) + rand(0, 100) / 100, // turbine rotating velocity, RPM
-        'top' => rand(20, 50) + rand(0, 100) / 100, // turbine output power, Watt
+        'wtop' => rand(20, 50) + rand(0, 100) / 100, // wind turbine output power, Watt
         'sbop' => rand(5, 20) + rand(0, 100) / 100, // solar battery output power, Watt
         'bcl' => rand(0, 99) + rand(0, 100) / 100, // battery charge level
         'lat' => rand(40, 50) + rand(0, 100) / 100, // latitude
