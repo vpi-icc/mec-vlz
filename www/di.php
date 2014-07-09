@@ -82,7 +82,10 @@
             $stmt->execute();
 
             if ( $stmt->errorCode() !== '00000' )
-                $res = "error";
+            {
+                $error = $stmt->errorInfo();
+                $res = 'Error ' . $error[0] . ': ' . $error[1] . ' (' . $error[2] . ')';
+            }
             else $res = 'ok' . $response_token;
         }
 	}
