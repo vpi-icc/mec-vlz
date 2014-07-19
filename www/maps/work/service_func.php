@@ -42,7 +42,7 @@ FOOTER;
 function connect_db()
 {
 	 require_once("../config/config.php");
-	 $dbcnx=@mysql_connect($dblocation, $dbuser, $dbpasswd); 
+	 $dbcnx=@mysql_connect($dbhost, $dbuser, $dbpass);
 	 if (!$dbcnx)  
        return "Сервер базы данных недоступен!!!"; 
      else    

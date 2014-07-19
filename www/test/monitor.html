@@ -16,8 +16,14 @@
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 
+    <!-- jQuery.Color plugin for color animation support -->
+    <script src="/js/jquery.color-2.1.2.min.js"></script>
+
+
     <!-- Latest compiled and minified JavaScript -->
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+
+    <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyC2U2uxHdXagBgNb6PSsYxp-SmlUSyXv1s&sensor=true"></script>
 
     <script src="http://code.highcharts.com/highcharts.js"></script>
     <script src="http://code.highcharts.com/modules/no-data-to-display.js"></script>
@@ -35,448 +41,87 @@
 
     <link rel="stylesheet" href="/css/styles.css" />
 
+    <script src="/js/common.js"></script>
+    <script src="/js/map.js"></script>
+    <script src="/js/chart.js"></script>
+    <script src="/js/monitor.js"></script>
+
 </head>
 <body>
     <div class="container">
         <div class="row">
             <div class="col-md-12">
+                <div id="map_canvas"></div>
+                <div class="text-center">
+                    <button type="button" class="btn btn-default" id="btn-map-show">показать карту &darr;</button>
+                    <button type="button" class="btn btn-default" id="btn-map-hide">скрыть карту &uarr;</button>
+                </div>
                 <div class="row">
-                    <div class="col-md-8 col-md-offset-4" id="dashboard">
-                        <div class="row" id="dashboard-body">
-                            <div class="col-sm-5">
-                                <div class="block-rel">
-                                    <div id="top"></div>
-                                    <span class="icon-flash ico" id="ico-power"></span>
+                    <div class="col-xs-12">
+                        <div id="connection-info">
+                            <span class="icon-warning"></span>&nbsp;&nbsp;<span>Связь с МЭК потеряна <span id="info-connection-lost">1</span> мин. назад</span>
+                        </div>
+                    </div>
+                    <div class="col-xs-12" id="dashboard">
+                        <div class="col-md-4" id="dashboard-load">
+                            <div class="icon-lightbulb"></div>
+                            <div id="load-indication">
+                                <div id="lp">200</div>
+                                <div id="load-descr">
+                                    <abbr title="Мощность нагрузки">P<sub>нагр.</sub></abbr>, Вт
                                 </div>
                             </div>
-                            <div class="col-sm-4">
-                                <div class="block-rel">
-                                    <div id="wtop"></div>
-                                    <span id="ico-wtop" class="icon-wind-turbine ico"></span>
-                                    <div id="trv">
-                                        <span class="icon-spinner"></span>&nbsp;&nbsp;<abbr title="Скорость вращения лопастей турбины ветрогенератора, об./мин.">0</abbr>
+                        </div>
+                        <div class="col-md-8" id="dashboard-mec">
+                            <div class="row">
+                                <div class="col-sm-5">
+                                    <div class="block-rel">
+                                        <div id="top"></div>
+                                        <span class="icon-flash ico" id="ico-power"></span>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="block-rel">
+                                        <div id="wtop"></div>
+                                        <span id="ico-wtop" class="icon-wind-turbine ico"></span>
+                                        <div id="trv">
+                                            <span class="icon-spinner"></span>&nbsp;&nbsp;<abbr title="Скорость вращения лопастей турбины ветрогенератора, об./мин.">0</abbr>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3">
+                                    <div id="battery"><span id="bcl">0</span>&thinsp;%&nbsp;<span class="icon-battery-0"></span></div>
+                                    <div class="block-rel">
+                                        <div id="sbop"></div>
+                                        <span id="ico-sbop" class="icon-solar-battery ico"></span>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-sm-3">
-                                <div id="battery"><span id="bcl">0</span>&thinsp;%&nbsp;<span class="icon-battery-0"></span></div>
-                                <div class="block-rel">
-                                    <div id="sbop"></div>
-                                    <span id="ico-sbop" class="icon-solar-battery ico"></span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row" id="dashboard-foot">
-                            <div class="col-sm-12">Временно потеряна связь с МЭК</div>
                         </div>
                     </div>
+                </div>
+                <div id="infoblock-countdown">
+                    <p><span class="icon-clock"></span> Повторный опрос через <span id="countdown" class="badge">xx</span>&nbsp;с.</p>
                 </div>
                 <div id="chart"></div>
             </div>
         </div>
     </div>
+    <script>
+        $( function(){
 
-<script type="text/javascript">
+            $('#top').data(cc.top).circliful();
+            $('#wtop').data(cc.wtop).circliful();
+            $('#sbop').data(cc.sbop).circliful();
 
-    var chart;
+            requestData();
 
+            // user interface
 
-    var indications = {
-        top:    { text: 'Суммарная выходная мощность' },
-        wtop:   { text: 'Выходная мощность турбины ветрогенератора' },
-        trv:    { text: 'Скорость вращения лопастей турбины ветрогенератора' },
-        sbop:   { text: 'Выходная мощность солнечной батареи' },
-        bcl:    { text: 'Уровень заряда аккумуляторной батареи' }
-    };
+            $('#btn-map-show').click( toggleMap );
+            $('#btn-map-hide').click( toggleMap );
 
-    var cc = {
-        top: {
-            text: '0',
-            info: '<abbr title="Суммарная выходная мощность">P<sub>общ.</sub></abbr>, Вт',
-            dimension: 250,
-            width: 30,
-            fontsize: 30,
-            fgcolor: '#777',
-            bgcolor: '#d5d5d5',
-            fill: '#ddd',
-            total: 400,
-            part: 0,
-            icon: 'icon-long-arrow-up',
-            iconsize: 24,
-            iconcolor: '#090',
-            border: 'outline'
-        },
-        wtop: {
-            text: '0',
-            info: '<abbr title="Выходная мощность турбины ветрогенератора">P<sub>ветр.</sub></abbr>, Вт',
-            dimension: 200,
-            width: 20,
-            fontsize: 20,
-            fgcolor: '#61a9dc',
-            bgcolor: '#d5d5d5',
-            //bgcolor: '#AED7F4',
-            fill: '#ddd',
-            //fill: '#C9DFF3',
-            total: 300,
-            part: 0,
-            icon: 'icon-long-arrow-up',
-            iconsize: 14,
-            iconcolor: '#090',
-            border: 'outline'
-        },
-        sbop: {
-            text: '0',
-            info: '<abbr title="Выходная мощность солнечной батареи">P<sub>солн.</sub></abbr>, Вт',
-            dimension: 150,
-            width: 25,
-            fontsize: 16,
-            fgcolor: '#ee3',
-            bgcolor: '#555',
-            fill: '#333',
-            total: 100,
-            part: 0,
-            icon: 'icon-long-arrow-down',
-            iconsize: 11,
-            iconcolor: '#900',
-            border: 'inline'
-        }
-    }
-
-
-
-
-    function getNextIndications(){
-        var url = '/test/grapher.php';
-        var gd = chart.get('top').data;
-        var tsLast = gd[gd.length-1].x;
-        $.get( url, { tsLast: tsLast / 1000 } )
-                .done( function( data ){
-                    //data = { ts: 1404161054000, top: 44, wtop: 32, sbop: 15, trv: 6700, bcl: 55 };
-                    if ( data == null ) {
-                        $('#dashboard-foot').slideDown(500);
-                        $('#dashboard-body').fadeTo(500, 0.25);
-                        chart.showLoading('Временно потеряна связь с МЭК');
-                        return false;
-                    }
-                    if ( data.ts === tsLast ){
-                        return false;
-                    }
-                    $('#dashboard-foot').slideUp(500);
-                    $('#dashboard-body').fadeTo(500, 1);
-                    chart.hideLoading();
-                    addDataPoints(chart, data);
-                    var indications = getLastIndications(data);
-                    setDashboardIndications(indications);
-                });
-    }
-
-    function addDataPoints( chart, data ){
-
-        var params = [ 'top', 'wtop', 'sbop', 'trv', 'bcl' ];
-
-        for ( var i = 0; i < data.ts.length; i++ )
-        {
-            for ( var j in params ) {
-                var p = params[j];
-                var point = [ data['ts'][i], data[p][i] ];
-                chart.get(p).addPoint(point, false, false);
-            }
-        }
-
-        chart.redraw();
-    }
-
-
-    function setChartData( chart, data ) {
-
-        var params = [ 'top', 'wtop', 'sbop', 'trv', 'bcl' ];
-        var sd = {}; // series data
-
-        for ( var j in params ) {
-            var p = params[j];
-            sd[p] = [];
-            for ( var i = 0; i < data.ts.length; i++ ) {
-                sd[p][i] = [ data['ts'][i], data[p][i] ];
-            }
-        }
-
-        for ( var j in params ) {
-            var p = params[j];
-            var series = chart.get(p);
-            series.setData(sd[p], false);
-
-            if ( p === 'top' )
-                series.setVisible(true);
-        }
-    }
-
-    function setDashboardIndications( newValues ) {
-        if ( newValues == null ) {
-            return false;
-        }
-        var currentValues = getCurrentIndications();
-        //newValues = { top: 40, wtop: 30, sbop: 10, trv: 5000, bcl: 100 };
-        var paramsAll = [ 'top', 'wtop', 'sbop', 'trv', 'bcl' ];
-        for ( i in paramsAll ) {
-            p = paramsAll[i];
-            newValues[p] = Math.floor(newValues[p]);
-        }
-        var params = [ 'top', 'wtop', 'sbop' ];
-        for ( j in params ){
-            p = params[j];
-            el = $('#' + p);
-            el.html('');
-            el.data('part', newValues[p]);
-            el.data('text', newValues[p]);
-
-            if ( newValues[p] == currentValues[p] ){
-                el.removeData('icon');
-            }
-            else {
-                var dir = newValues[p] >= currentValues[p] ? 'up' : 'down';
-                el.data('icon', 'icon-long-arrow-' + dir);
-                var iconcolor = ( dir === 'up' ) ? '#090' : '#900';
-                el.data('iconcolor', iconcolor);
-            }
-            el.circliful();
-        }
-        $('#bcl').text(newValues.bcl);
-        var levels = [ 0, 20, 20, 40, 40, 40, 60, 80, 80, 100, 100 ];
-        var icon = $('#battery span[class^="icon-"]');
-        icon.removeClass();
-        icon.addClass('icon-battery-' + levels[Math.floor(newValues.bcl / 10)]);
-        $('#trv abbr').text(newValues.trv);
-    }
-
-    function getCurrentIndications(){
-        return {
-            top: $('#top').data('part'),
-            wtop: $('#wtop').data('part'),
-            sbop: $('#sbop').data('part')
-            /*
-             trv: $('#trv abbr').text().replace(/\s/, ''),
-             bcl: $('#bcl').text()
-             */
-        }
-    }
-
-    function requestData() {
-        var width = chart.container.style.width.slice(0, -2);
-        chart.setSize(width, 200);
-        chart.showLoading('Получение данных...');
-
-        $.getJSON('/test/grapher.php?sid=1')
-                .done( function( json ) {
-                    if ( json == null ) return false;
-                    setChartData(chart, json);
-                    chart.setSize(width, 400);
-                    $('#dashboard').fadeTo(500, 1);
-                    var indications = getLastIndications(json);
-                    setDashboardIndications(indications);
-                    setInterval(getNextIndications, 1000 * 60);
-                })
-                .fail( function( jqxhr, textStatus, error ) {
-                    var err = textStatus + ", " + error;
-                    console.log( "Request failed: " + err );
-                })
-                .always( function() {
-                    chart.hideLoading();
-                });
-    }
-
-    function getLastIndications( data ){
-
-        var indications = [];
-        var params = [ 'top', 'wtop', 'sbop', 'trv', 'bcl' ];
-        var iLast = data['ts'].length - 1;
-
-        for ( var j in params ) {
-            var p = params[j];
-            indications[p] = Math.floor(data[p][iLast]);
-        }
-
-        return indications;
-    }
-
-    Highcharts.setOptions({
-        global: {
-            useUTC: false
-        }
-    });
-
-    chart = new Highcharts.Chart({
-
-        chart: {
-            renderTo: 'chart',
-            defaultSeriesType: 'spline',
-            events: {
-                //load: requestData
-            }
-        },
-        title: {
-            text: 'График показаний измерительных приборов МЭК'
-        },
-        subtitle: {
-            text: 'динамика измерений за последний час'
-        },
-        plotOptions: {
-            series: {
-                lineWidth: 1,
-                marker: {
-                    symbol: 'circle',
-                    enabled: false,
-                    fillColor: '#fff',
-                }
-            }
-        },
-        xAxis: {
-            type: 'datetime',
-            tickPixelInterval: 150,
-            tickInterval: 5 * 60 * 1000,
-            labels: {
-                format: '{value:%H:%M}'
-            },
-            title: {
-                text: 'время, мм:сс'
-            },
-            showEmpty: false
-        },
-        yAxis: [ {
-            id: 'power',
-            minPadding: 0.2,
-            maxPadding: 0.2,
-            floor: 0,
-            ceiling: 100,
-            title: {
-                text: 'выходная мощность, Вт'
-            },
-            showEmpty: false
-        }, {
-            id: 'velocity',
-            title: {
-                text: 'скорость вращения, об./мин.'
-            },
-            lineColor: '#5e5',
-            lineWidth: 1,
-            showEmpty: false
-        }, {
-            id: 'level',
-            floor: 0,
-            ceiling: 100,
-            opposite: true,
-            title: {
-                text: 'уровень заряда, %'
-            },
-            lineColor: '#eee',
-            lineWidth: 5,
-            showEmpty: false
-        }
-        ],
-        /*
-         colors: [
-         '#000',
-         ],
-         */
-
-        series: [{
-            id: 'top',
-            name: indications.top.text,
-            yAxis: 'power',
-            visible: false,
-            color: '#777',
-            lineWidth: 3,
-            marker: {
-                fillColor: '#999',
-                enabled: true,
-                lineColor: '#fff',
-                lineWidth: 4
-            },
-            data: []
-        }, {
-            id: 'wtop',
-            name: indications.wtop.text,
-            yAxis: 'power',
-            visible: false,
-            lineWidth: 2,
-            color: '#61a9dc',
-            marker: {
-                fillColor: null,
-            },
-            data: []
-        }, {
-            id: 'sbop',
-            name: indications.sbop.text,
-            yAxis: 'power',
-            visible: false,
-            color: '#ee3',
-            lineWidth: 2,
-            //shadow: { color: '#555' },
-            data: [],
-        }, {
-            id: 'trv',
-            name: indications.trv.text,
-            yAxis: 'velocity',
-            visible: false,
-            color: '#61a9dc',
-            lineWidth: 1,
-            dashStyle: 'longDash',
-            marker: {
-                radius: 1,
-                lineWidth: 1,
-                fillColor: null
-            },
-            data: []
-        }, {
-            id: 'bcl',
-            name: indications.bcl.text,
-            yAxis: 'level',
-            visible: false,
-            type: 'areaspline',
-            color: '#eee',
-            fillColor: '#fefefe',
-            lineWidth: 3,
-            color: '#eee',
-            zIndex: -1,
-            marker: {
-                radius: 5,
-                lineWidth: 5,
-                fillColor: '#999',
-                lineColor: null
-            },
-            data: []
-        }],
-        noData: {
-            style: {
-                fontWeight: 'bold',
-                fontSize: '15px',
-                color: '#303030'
-            }
-        },
-        loading: {
-            labelStyle: {
-                top: '35%',
-            },
-            style: {
-                opacity: 0.25,
-                backgroundColor: '#eee'
-            }
-        },
-        lang: {
-            noData: "За последний час никаких показаний от МЭК не поступало"
-        },
-    });
-
-    $( function(){
-
-        $('#top').data(cc.top).circliful();
-        $('#wtop').data(cc.wtop).circliful();
-        $('#sbop').data(cc.sbop).circliful();
-
-        requestData();
-        //var lastId = data[data.length-1].id;
-        //setTimeout(getNextIndications, 1000);
-    });
-</script>
-
-    </body>
+        });
+    </script>
+</body>
 </html>

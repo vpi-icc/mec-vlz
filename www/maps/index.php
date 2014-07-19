@@ -1,4 +1,4 @@
-﻿<?php header('Content-type: text/html; charset=utf-8');
+<?php header('Content-type: text/html; charset=utf-8');
 require_once("work/service_func.php");
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -15,8 +15,7 @@ require_once("work/service_func.php");
     <link rel="stylesheet" type="text/css" href="css/main.css">
     <link rel="stylesheet" type="text/css" href="css/page.css">
     <link rel="stylesheet" type="text/css" href="css/jquery-ui-1.10.3.custom.css" >
-     <link rel="stylesheet" type="text/css" href="css/bootstrap.css">
-     <link  href="../css/page.css" type="text/css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.css">
     <script type="text/javascript"
       src="http://maps.googleapis.com/maps/api/js?key=AIzaSyC2U2uxHdXagBgNb6PSsYxp-SmlUSyXv1s&sensor=true">
     </script>
@@ -45,17 +44,17 @@ require_once("work/service_func.php");
            <tr>
              <td><span class="spnPointInfo">Развернут...</span>
               </td>
-             <td> <input type="text" placeholder="выберите дату" id="datefrom" name="datefrom"/></td>
+             <td> <input type="text" placeholder="выберите дату" id="datefrom" name="datefrom" disabled="disabled"/></td>
             </tr>
            <tr>
              <td><span class="spnPointInfo">Свернут...</span>
               </td>
-             <td><input type="text" placeholder="выберите дату" id="dateto" name="dateto"/>
+             <td><input type="text" placeholder="<? echo date("Y-m-d");?>" id="dateto" name="dateto" disabled="disabled"/>
               </td>
             </tr>
          </table>
            <label class="checkbox" style="width:200px">
-             <input type="checkbox" value="" name="isActive" id="isActive">
+             <input type="checkbox" value=""  disabled="disabled" name="isActive" id="isActive">
              Текущее положение МЭК
            </label>
           
@@ -78,7 +77,7 @@ require_once("work/service_func.php");
           
      <div style="clear:both"></div>
    </div>
-   <div class="btn btn-primary" id="btnAddPoint">Добавить точку</div>
+   <div class="btn btn-primary" id="btnAddPoint" style=" display:none">Добавить точку</div>
    <div style="height:88px"></div>
    </div>
 <? footer();

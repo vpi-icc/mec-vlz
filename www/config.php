@@ -11,3 +11,5 @@ $dbname = "mec";
 $dbuser = "mec";
 $dbpass = "rusgidro";
 $dsn = "mysql:dbname=" . $dbname . ";host=" . $dbhost;
+
+require_once "common.php";

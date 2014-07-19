@@ -198,6 +198,11 @@ function delPoint() {
 
 }
 
+function markerClicked(){
+    //alert(this.idPoint);
+    requestData(this.idPoint, this.isActive);
+}
+
 function getMapPoints() {
     removeMarkers();
     $.ajax({
@@ -209,37 +214,35 @@ function getMapPoints() {
             if (data['status'] == "ok") {
                 data["points"].forEach(function (point) {
                     var pointMarker;
-                    var pLatLng = new google.maps.LatLng(point["lat"], point["lng"]);
+                    var pLatLon = new google.maps.LatLng(point["lat"], point["lon"]);
                     if (point["dateto"] != null)
                         iconName = "/maps/images/WindGen.png";
                     else
                         iconName = "/maps/images/WindGenActive.png";
                     pointMarker = new google.maps.Marker({
-                        position: pLatLng,
+                        position: pLatLon,
                         map: map,
                         icon: iconName,
                     })
                     if (point["dateto"] != null) {
-
                         pointMarker.dateto = point["dateto"];
-                        point["active"] = "0";
+                        point["active"] = false;
                     } else {
                         pointMarker.dateto = null;
-                        point["active"] = "1";
+                        point["active"] = true;
                     }
-                    if (point["active"] == "1") {
+                    if ( point["active"] ) {
                         pointMarker.setAnimation(google.maps.Animation.BOUNCE);
 
                     }
 
-
-                    pointMarker.pointName = point["pointName"];
+                    pointMarker.pointName = point["name"];
                     pointMarker.description = point["description"];
                     pointMarker.datefrom = point["datefrom"];
 
-                    pointMarker.isactive = point["active"];
+                    pointMarker.isActive = point["active"];
                     pointMarker.idPoint = point["id"];
-                    pointMarker.fileName = point["filename"];
+                    //pointMarker.fileName = point["filename"];
                     allMarkers.push(pointMarker);
                     var fromStr = "",
                         toStr = "",
@@ -248,27 +251,36 @@ function getMapPoints() {
                         fromStr = "<p class='infoSubTitle'>МЭК установлен <span class='spnInfo'>" + point["datefrom"] + "</span></p>";
                     if (pointMarker.dateto != null)
                         toStr = "<p class='infoSubTitle'> свернут  <span class='spnInfo'>" + point["dateto"] + "</span></p>";
+                    /*
                     if (point["filename"] != null)
                         imgStr = "<img class='rightimg' src='photos/rs_" + point["filename"] + "'>";
+                    */
                     var contentString = '<div id="pointContent">' +
-                        "<div id='infoWTitle'>" + point["pointName"] + "</div><p>" +
+                        "<div id='infoWTitle'>" + point["name"] + "</div><p>" +
                         imgStr + point["description"] +
                         fromStr + toStr +
                         '</p></div>';
                     var infowindow = new google.maps.InfoWindow({
                         content: contentString
                     });
+
+                    /*
                     google.maps.event.addListener(pointMarker, 'mouseover', function () {
                         infowindow.open(map, pointMarker);
                     });
 
                     google.maps.event.addListener(pointMarker, 'mouseout', function () {
-                        //infowindow.close();
+                        infowindow.close();
                     });
+                    */
+
+
+                    /*
                     google.maps.event.addListener(pointMarker, 'click', function () {
                         if (!bEditPoint) editPointForm(this);
                     });
-
+                    */
+                    google.maps.event.addListener(pointMarker, 'click', markerClicked);
                 });
 
 
@@ -280,7 +292,7 @@ function getMapPoints() {
 
         },
         error: function (xhr, status) {
-            alert(status);
+            alert('error: ' + status);
             // $("#status").html("Не удалось добавить точку в базу");
         }
     });
@@ -294,45 +306,45 @@ $(document).ready(function () {
     //$("#pointInfo").hide();
     //initFormValidation();
     /* $("#btnAddPoint").click(function(){
-     initPointInfoForm(); 
+     initPointInfoForm();
 
      $("#pointInfo").show();
      bEditPoint=true;
      $("#btnAddPoint").hide();
      });
      */
-/*
-    $("#btnCancelPoint").click(function () {
+    /*
+     $("#btnCancelPoint").click(function () {
 
-        bEditPoint = false;
-        //  $("#btnAddPoint").show();
-        if (marker && $("#btnRemPoint").is(":hidden"))
-            marker.setMap(null);
-        $("#pointInfo").fadeOut("normal");
-    });
+     bEditPoint = false;
+     //  $("#btnAddPoint").show();
+     if (marker && $("#btnRemPoint").is(":hidden"))
+     marker.setMap(null);
+     $("#pointInfo").fadeOut("normal");
+     });
 
-    $("#btnRemPoint").click(function () {
-        delPoint();
-    });
+     $("#btnRemPoint").click(function () {
+     delPoint();
+     });
 
 
-    $("#isActive").bind("click", function () {
-        //	$("#dateto").prop('disabled', $(this).prop("checked"));
-        if ($(this).prop("checked"))
-            $("#dateto").val("");
+     $("#isActive").bind("click", function () {
+     //	$("#dateto").prop('disabled', $(this).prop("checked"));
+     if ($(this).prop("checked"))
+     $("#dateto").val("");
 
-    });
+     });
 
-    // $( "#datefrom").datepicker($.datepicker.regional[ "ru" ]);
-    //  $( "#datefrom" ).datepicker( "option", "dateFormat", "yy-mm-dd" );
-    //  $( "#dateto").datepicker($.datepicker.regional[ "ru" ]); 
-    // $( "#dateto" ).datepicker( "option", "dateFormat", "yy-mm-dd" );
+     // $( "#datefrom").datepicker($.datepicker.regional[ "ru" ]);
+     //  $( "#datefrom" ).datepicker( "option", "dateFormat", "yy-mm-dd" );
+     //  $( "#dateto").datepicker($.datepicker.regional[ "ru" ]);
+     // $( "#dateto" ).datepicker( "option", "dateFormat", "yy-mm-dd" );
 
-    $("#testP").click(function () {
-        $("#isAct").prop('checked', true);
-    });
-    $("#testM").click(function () {
-        $("#isAct").prop('checked', false);
-    });
-    */
+     $("#testP").click(function () {
+     $("#isAct").prop('checked', true);
+     });
+     $("#testM").click(function () {
+     $("#isAct").prop('checked', false);
+     });
+     */
 });

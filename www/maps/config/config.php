@@ -1,8 +1,11 @@
 <?php
+    /*
    	 $dblocation="mysql6.000webhost.com";  
 	 $dbuser="a8987760_usermec";  
-	 $dbpasswd="mec2014";  
+	 $dbpasswd="rusgidro8443";  
          $dbname="a8987760_mec";
+*/
+    include $_SERVER['DOCUMENT_ROOT'] . '/config.php';
 ?>
 
 <?

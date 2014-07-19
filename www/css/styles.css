@@ -3,39 +3,90 @@
 @import "battery-horizontal.css";
 */
 
-#dashboard {
-    padding: 30px;
-    background: #f0f0f0;
-    margin-top: 50px;
-    margin-bottom: 50px;
-    border-radius: 10px;
-    display: none;
+#map_canvas {
+    height: 200px;
+    width: 100%;
 }
 
-#dashboard-foot {
+#dashboard {
+    display: none;
+    padding: 30px;
+    margin-bottom: 50px;
+    border: 1px solid red;
+}
+
+#dashboard-load {
+    border-radius: 10px;
+    text-align: center;
+    padding-top: 50px;
+}
+
+#dashboard-load .icon-lightbulb {
+    font-size: 160px;
+    color: #fff;
+    height: 200px;
+    width: 200px;
+    border-radius: 100px;
+    background: #ccc;
+    padding-top: 20px;
+    margin: 0 auto;
+}
+
+#dashboard-load #load-indication {
+    margin-top: 10px;
+}
+
+#dashboard-load #lp {
+    font-family: 'Days One', sans-serif;
+    font-size: 32px;
+    color: #444;
+}
+
+#dashboard-load #load-descr {
+    font-weight: bold;
+    color: #999;
+}
+
+#dashboard-mec {
+    background: #f0f0f0;
+    border-radius: 10px;
+    padding: 15px 25px 15px 10px;
+}
+
+#connection-info {
     background: #ddd;
-    margin: 20px -30px -29px;
+    margin: 50px 0;
     padding: 15px 40px 10px;
     font-size: 16px;
     font-weight: bold;
     color: #555;
-    border-radius: 0 0 10px 10px;
     border-top: 1px solid #999;
+    border-bottom: 1px solid #999;
     opacity: 0.75;
-    display: none;
+    display: block;
 }
 
-#dashboard-body {
+#connection-info .icon-warning {
     /*
-    opacity: 0.25;
+    color: #d22;
     */
 }
 
-#dashboard .block-rel {
+#infoblock-countdown {
+    float: right;
+    font-size: 12px;
+    padding-top: 5px;
+}
+
+#infoblock-countdown .icon-clock {
+    font-size: 12px;
+}
+
+#dashboard-mec .block-rel {
     height: 270px;
 }
 
-#dashboard div[class^='col-'] {
+#dashboard-mec div[class^='col-'] {
     /*
     border: 1px solid red;
     */
@@ -115,4 +166,13 @@
 
 #battery #bcl {
     float: left;
+}
+
+#btn-map-show {
+    margin-top: 10px;
+}
+
+#btn-map-hide {
+    margin-top: 10px;
+    display: none;
 }

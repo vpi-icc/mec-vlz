@@ -15,62 +15,47 @@
         exit();
     }
 
-/*
-    if ( empty($_GET['sid']) )
+    // if no point id provided consider it is the current point
+    if ( empty($_GET['pid']) )
     {
-        echo 'No session identifier specified';
-        exit();
-    }
-*/
-
-    if ( !empty($_GET['tsLast']) )
-    {
-
-        //exit();
-        if ( rand(0, 1) )
+        $pid = get_last_point_id($pdo);
+        if ( !empty($_GET['tsLast']) )
         {
-            echo json_encode(null);
-            exit();
+            $ts = $_GET['tsLast'] + 1;
+
+            $query = "
+                SELECT UNIX_TIMESTAMP( TS ) AS TS, WTOP + SBOP AS TOP, WTOP, LP, SBOP, TRV, BCL
+                FROM indications
+                WHERE
+                    UNIX_TIMESTAMP( TS ) BETWEEN " . $ts  . " AND UNIX_TIMESTAMP(NOW())
+                    AND
+                    pid = " . $pid . "
+                ORDER BY TS";
         }
-        $ts = $_GET['tsLast'] + 1;
-
-        $query = "
-        SELECT UNIX_TIMESTAMP( TS ) AS TS, WTOP + SBOP AS TOP, WTOP, SBOP, TRV, BCL
-        FROM indications
-        WHERE UNIX_TIMESTAMP( TS ) BETWEEN " . $ts  . " AND UNIX_TIMESTAMP(NOW())
-        ORDER BY TS";
-
-
-        /*
-        $query = "
-            SELECT UNIX_TIMESTAMP( TS ) AS TS, WTOP + SBOP AS TOP, WTOP, SBOP, TRV, BCL
-            FROM indications
-            ORDER BY id DESC
-            LIMIT 1";
-        */
-        /*
-
-        $stmt = $pdo->query($query);
-
-        $item = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        $data['ts']     = $item['TS'] * 1000;
-        $data['top']    = (float)$item['TOP'];
-        $data['wtop']   = (float)$item['WTOP'];
-        $data['sbop']   = (float)$item['SBOP'];
-        $data['trv']    = (float)$item['TRV'];
-        $data['bcl']    = (float)$item['BCL'];
-
-        */
+        else
+        {
+            $query = "
+                SELECT UNIX_TIMESTAMP(TS) AS TS, WTOP + SBOP AS TOP, WTOP, SBOP, LP, TRV, BCL
+                FROM indications
+                WHERE
+                  pid = " . $pid . "
+                  AND
+                  TS BETWEEN NOW() - INTERVAL 1 HOUR AND NOW()
+                ORDER BY TS";
+        }
     }
     else
     {
+        $pid = (int)$_GET['pid'];
         $query = "
-            SELECT UNIX_TIMESTAMP(TS) AS TS, WTOP + SBOP AS TOP, WTOP, SBOP, TRV, BCL
+            SELECT UNIX_TIMESTAMP(TS) AS TS, WTOP + SBOP AS TOP, WTOP, SBOP, LP, TRV, BCL
             FROM indications
-            WHERE TS BETWEEN NOW() - INTERVAL 1 HOUR AND NOW()
+            WHERE
+              pid = " . $pid . "
             ORDER BY TS";
     }
+
+
 
     $stmt = $pdo->query($query);
 
@@ -80,6 +65,7 @@
         $data['top'][]  = (float)$item['TOP'];
         $data['wtop'][] = (float)$item['WTOP'];
         $data['sbop'][] = (float)$item['SBOP'];
+        $data['lp'][] = (float)$item['LP'];
         $data['trv'][]  = (float)$item['TRV'];
         $data['bcl'][]  = (float)$item['BCL'];
     }

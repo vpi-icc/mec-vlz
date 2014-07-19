@@ -97,15 +97,11 @@ function makeImg($photo)
 	header('Content-Type: application/json; charset=utf-8');
     if($_POST['passwd']=="мэк")
  {	 
-	$fileElementName="imgPict";
-   if( isset($_POST['lat']) && isset($_POST['lng']))
-	{
-	 $lat=$_POST['lat'];
-	 $lng=$_POST['lng'];
-	 $pointName=$_POST["title"];
+	 $fileElementName="imgPict";
+ 	 $pointName=$_POST["title"];
 	 $desc=$_POST["desc"];
 	 $isActive=$_POST["isActive"];
-	 $datefrom=$_POST["datefrom"];
+	
 	 $idPoint=$_POST["idpoint"];
 	   
 	 $dbcnx=@mysql_connect($dblocation, $dbuser, $dbpasswd); 
@@ -118,37 +114,8 @@ function makeImg($photo)
 		 $response['message']="Сервер базы данных недоступен??";
 		else
 		 {
-			if($isActive=="true")
-			   {
-				 $query = "UPDATE points set active=false where active=true";
-			     $res = mysql_query($query) or die(mysql_error());
-			if($idPoint==0)	 
-			    $query = "INSERT INTO points (pointName, lat, lng, description, active, datefrom, dateto) VALUES('$pointName', '$lat', '$lng', '$desc', $isActive, '$datefrom', 'NULL')";
-			else
-			   	 $query = "UPDATE points SET  pointName='$pointName', lat='$lat', lng='$lng', description='$desc', active= $isActive, datefrom='$datefrom', dateto='NULL' where id=$idPoint";
-			   }//if($isActive=="true")
-			   else
-			 {
-				 if($idPoint==0)
-				  {if(empty($_POST["dateto"]))
-				    $query = "INSERT INTO points (pointName, lat, lng, description, active, datefrom) VALUES('$pointName', '$lat', '$lng', '$desc', $isActive, '$datefrom')";	
-				 else{
-				   $dateto=$_POST["dateto"];
-				   $query = "INSERT INTO points (pointName, lat, lng, description, active, datefrom, dateto) VALUES('$pointName', '$lat', '$lng', '$desc', $isActive, '$datefrom', '$dateto')";
-				    }
-				  }
-				 else
-				 {
-				  if(empty($_POST["dateto"]))
-				    $query = "UPDATE points SET pointName='$pointName', lat='$lat', lng='$lng', description='$desc', active= $isActive, datefrom='$datefrom' where id=$idPoint";	
-				 else{
-				   $dateto=$_POST["dateto"];
-				   $query = "UPDATE  points SET pointName='$pointName', lat='$lat', lng='$lng', description='$desc', active= $isActive, datefrom='$datefrom', dateto='$dateto' where id=$idPoint";
-					 }
-				 }
-				//$response['message']=$query; 
-			} //else if($isActive=="true")
-		//	$response['message']=$query; 
+			
+			$query = "UPDATE points SET  pointName='$pointName', description='$desc' where id=$idPoint";
 			$res = mysql_query($query) or die(mysql_error());
 			if($idPoint==0)
 			   $idPoint=mysql_insert_id();
@@ -158,7 +125,7 @@ function makeImg($photo)
      				@unlink("../photos/"."rs_".$_POST["filename"]);
 			   }
 			$fileElementName = 'imgPict';
-			// $response['message']=$_FILES[$fileElementName]['name'];
+			 $response['message']=$_FILES[$fileElementName]['name'];
  			 if(!empty($_FILES[$fileElementName]['name']))
   			{ 
     			$extension=strstr($_FILES[$fileElementName]['name'], ".");
@@ -201,11 +168,7 @@ function makeImg($photo)
 	}//else if(!@mysql_select_db($dbname, $dbcnx))
    }// else if (!$dbcnx)
    $response['status']="ok";
-  }//if( isset($_POST['lat']) && isset($_POST['lng']))
- else
-  {$response['message']="Некорректный запрос"; 
-   $response['status']="err";
-  }
+ 
  }
  else
   {$response['message']="Неверный пароль"; 
