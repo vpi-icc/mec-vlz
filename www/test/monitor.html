@@ -8,25 +8,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
 
     <!-- Optional theme -->
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="/css/bootstrap-theme.min.css">
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="/js/jquery.min.js"></script>
 
     <!-- jQuery.Color plugin for color animation support -->
     <script src="/js/jquery.color-2.1.2.min.js"></script>
 
 
     <!-- Latest compiled and minified JavaScript -->
-    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
 
+    <!--
     <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyC2U2uxHdXagBgNb6PSsYxp-SmlUSyXv1s&sensor=true"></script>
+    -->
 
-    <script src="http://code.highcharts.com/highcharts.js"></script>
-    <script src="http://code.highcharts.com/modules/no-data-to-display.js"></script>
+    <script src="/js/highcharts.js"></script>
+    <script src="/js/highcharts-more.js"></script>
+    <script src="/js/no-data-to-display.js"></script>
 
     <link rel="stylesheet" href="/css/jquery.circliful.css"  type="text/css" />
 
@@ -37,18 +40,44 @@
     <!-- <link rel="stylesheet" href="/css/cikonss.css" /> -->
     <link rel="stylesheet" href="/css/mec-icons.css" />
 
+    <!--
     <link rel='stylesheet' href='http://fonts.googleapis.com/css?family=Days+One' type='text/css'>
-
+    -->
+    <link rel="stylesheet" href="/css/font-days-one.css" />
     <link rel="stylesheet" href="/css/styles.css" />
 
     <script src="/js/common.js"></script>
+    <!--
     <script src="/js/map.js"></script>
+    -->
     <script src="/js/chart.js"></script>
     <script src="/js/monitor.js"></script>
 
 </head>
 <body>
     <div class="container">
+
+        <div class="row" id="dashboard-lite">
+            <div class="col-md-2 col-sm-4 col-xs-6">
+                <div><span class="icon-lightbulb"></span><span id="lp">64</span></div>
+            </div>
+            <div class="col-md-2 col-sm-4 col-xs-6">
+                <div><span class="icon-battery-60"></span><span id="bcl">50</span>&thinsp;%</div>
+            </div>
+            <div class="col-md-2 col-sm-4 col-xs-6">
+                <div><span class="icon-spinner"></span><span id="trv">55</span></div>
+            </div>
+            <div class="col-md-2 col-sm-4 col-xs-6">
+                <div><span class="icon-flash"></span><span id="top">128</span>&nbsp;<span class="icon-long-arrow-up"></span></div>
+            </div>
+            <div class="col-md-2 col-sm-4 col-xs-6">
+                <div><span class="icon-wind-turbine"></span><span id="wtop">79</span>&nbsp;<span class="icon-long-arrow-up"></span></div>
+            </div>
+            <div class="col-md-2 col-sm-4 col-xs-6">
+                <div><span class="icon-solar-battery"></span><span id="sbop">49</span>&nbsp;<span class="icon-long-arrow-down"></span></div>
+            </div>
+        </div>
+
         <div class="row">
             <div class="col-md-12">
                 <div id="map_canvas"></div>
@@ -57,11 +86,6 @@
                     <button type="button" class="btn btn-default" id="btn-map-hide">скрыть карту &uarr;</button>
                 </div>
                 <div class="row">
-                    <div class="col-xs-12">
-                        <div id="connection-info">
-                            <span class="icon-warning"></span>&nbsp;&nbsp;<span>Связь с МЭК потеряна <span id="info-connection-lost">1</span> мин. назад</span>
-                        </div>
-                    </div>
                     <div class="col-xs-12" id="dashboard">
                         <div class="col-md-4" id="dashboard-load">
                             <div class="icon-lightbulb"></div>
@@ -100,24 +124,38 @@
                         </div>
                     </div>
                 </div>
-                <div id="infoblock-countdown">
-                    <p><span class="icon-clock"></span> Повторный опрос через <span id="countdown" class="badge">xx</span>&nbsp;с.</p>
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div id="infoblock-countdown">
+                            <div id="connection-info">
+                                <span class="icon-warning"></span>&nbsp;&nbsp;<span>Связь с МЭК потеряна <span id="info-connection-lost">1</span> мин. назад</span>
+                            </div>
+                            <p><span class="icon-clock"></span> Повторный опрос через <span id="countdown" class="badge">xx</span>&nbsp;с.</p>
+                        </div>
+                    </div>
                 </div>
-                <div id="chart"></div>
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div id="chart"></div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
     <script>
         $( function(){
 
-            $('#top').data(cc.top).circliful();
-            $('#wtop').data(cc.wtop).circliful();
-            $('#sbop').data(cc.sbop).circliful();
 
+            $('#dashboard #top').data(cc.top).circliful();
+            $('#dashboard #wtop').data(cc.wtop).circliful();
+            $('#dashboard #sbop').data(cc.sbop).circliful();
+
+
+            initChart();
             requestData();
 
             // user interface
-
             $('#btn-map-show').click( toggleMap );
             $('#btn-map-hide').click( toggleMap );
 

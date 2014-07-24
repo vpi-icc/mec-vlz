@@ -2,5 +2,5 @@
   font-family: 'Days One';
   font-style: normal;
   font-weight: 400;
-  src: local('Days One'), local('DaysOne-Regular'), url(http://fonts.gstatic.com/s/daysone/v5/yfpXiXt9Xp5H97keqlB0t_esZW2xOQ-xsNqO47m55DA.woff) format('woff');
+  src: local('Dasys One'), local('DaysOne-Regular'), url('/fonts/yfpXiXt9Xp5H97keqlB0t_esZW2xOQ-xsNqO47m55DA.woff') format('woff');
 }

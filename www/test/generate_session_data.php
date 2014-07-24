@@ -44,12 +44,13 @@ curl_exec($ch);
 
 date_default_timezone_set('UTC');
 
-$n = 0;
+$n = 5;
 $lat = rand(40000, 50000);
 $lon = rand(40000, 50000);
 
 for ( $i = -$n; $i <= $n; $i++ )
 {
+    if ( $i % 3 === 0 ) continue;
     $ts = time() + $i * 60;
     $data = array(
         'date' =>   date("ymd", $ts),

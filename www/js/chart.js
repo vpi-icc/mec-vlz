@@ -2,8 +2,7 @@
  * Created by root on 19.07.14.
  */
 
-
-
+var chart;
 
 Highcharts.setOptions({
     global: {
@@ -11,8 +10,7 @@ Highcharts.setOptions({
     }
 });
 
-var chart = new Highcharts.Chart({
-
+var chartOptions = {
     chart: {
         renderTo: 'chart',
         defaultSeriesType: 'spline',
@@ -44,7 +42,7 @@ var chart = new Highcharts.Chart({
             format: '{value:%H:%M}'
         },
         title: {
-            text: 'время, мм:сс'
+            text: 'время, чч:мм'
         },
         showEmpty: false
     },
@@ -52,7 +50,7 @@ var chart = new Highcharts.Chart({
         id: 'power',
         minPadding: 0.2,
         maxPadding: 0.2,
-        floor: -300,
+        floor: 0,
         ceiling: 300,
         title: {
             text: 'выходная мощность, Вт'
@@ -79,12 +77,6 @@ var chart = new Highcharts.Chart({
         showEmpty: false
     }
     ],
-    /*
-     colors: [
-     '#000',
-     ],
-     */
-
     series: [{
         id: 'top',
         name: indications.top.text,
@@ -165,6 +157,20 @@ var chart = new Highcharts.Chart({
             fillColor: null
         },
         data: []
+    }, {
+        id: 'lost',
+        type: 'line',
+        yAxis: 'power',
+        name: 'Потери связи',
+        lineWidth: 10,
+        color: '#d55',
+        enableMouseTracking: false,
+        showInLegend: false,
+        data: []
+            /*
+            [(new Date()).getTime(), 0],
+            [(new Date()).getTime() + 10 * 60 * 1000, 0]
+        */
     }],
     noData: {
         style: {
@@ -184,7 +190,9 @@ var chart = new Highcharts.Chart({
     },
     lang: {
         noData: "За последний час никаких показаний от МЭК не поступало"
-    },
-});
+    }
+}
 
-console.log(chart);
+function initChart() {
+    chart = new Highcharts.Chart(chartOptions);
+}
