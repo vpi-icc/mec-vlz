@@ -59,15 +59,18 @@
 
     $stmt = $pdo->query($query);
 
-    foreach ( $stmt as $item )
+    if ( $stmt )
     {
-        $data['ts'][]   = $item['TS'] * 1000;
-        $data['top'][]  = (float)$item['TOP'];
-        $data['wtop'][] = (float)$item['WTOP'];
-        $data['sbop'][] = (float)$item['SBOP'];
-        $data['lp'][] = (float)$item['LP'];
-        $data['trv'][]  = (float)$item['TRV'];
-        $data['bcl'][]  = (float)$item['BCL'];
+        foreach ( $stmt as $item )
+        {
+            $data['ts'][]   = $item['TS'] * 1000;
+            $data['top'][]  = (float)$item['TOP'];
+            $data['wtop'][] = (float)$item['WTOP'];
+            $data['sbop'][] = (float)$item['SBOP'];
+            $data['lp'][] = (float)$item['LP'];
+            $data['trv'][]  = (float)$item['TRV'];
+            $data['bcl'][]  = (float)$item['BCL'];
+        }
     }
 
     echo json_encode($data);

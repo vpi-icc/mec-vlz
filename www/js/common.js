@@ -32,3 +32,6 @@ var indications = {
         level: null
     }
 };
+
+var dashboard = null;
+var intervalId = null;

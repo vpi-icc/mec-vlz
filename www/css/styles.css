@@ -93,12 +93,6 @@
     height: 270px;
 }
 
-#dashboard-mec div[class^='col-'] {
-    /*
-    border: 1px solid red;
-    */
-}
-
 .block-rel {
     position: relative;
 }
@@ -215,4 +209,18 @@
 
 #dashboard-lite [class^="icon-"] {
     margin-right: 10px;
+}
+
+#info-mec-offline {
+    text-align: center;
+    background-color: #f0f0f0;
+    padding: 15px 25px;
+    border-bottom: 2px solid #222;
+    display: none;
+}
+
+#info-mec-offline h1 {
+    font-size: 24px;
+    font-weight: bold;
+    color: #555;
 }

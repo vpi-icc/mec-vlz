@@ -201,6 +201,7 @@ function delPoint() {
 function markerClicked(){
     //alert(this.idPoint);
     requestData(this.idPoint, this.isActive);
+    $('#info-mec-offline').hide();
 }
 
 function getMapPoints() {

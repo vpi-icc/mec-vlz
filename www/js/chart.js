@@ -2,7 +2,7 @@
  * Created by root on 19.07.14.
  */
 
-var chart;
+var chart = null;
 
 Highcharts.setOptions({
     global: {
@@ -36,7 +36,7 @@ var chartOptions = {
     },
     xAxis: {
         type: 'datetime',
-        tickPixelInterval: 150,
+        //tickPixelInterval: 150,
         tickInterval: 5 * 60 * 1000,
         labels: {
             format: '{value:%H:%M}'
@@ -193,6 +193,114 @@ var chartOptions = {
     }
 }
 
+function updateConnectionGraph() {
+
+    var series = chart.get('lost');
+    var dataSeries = chart.get('top');
+    var n = series.data.length;
+    var m = dataSeries.data.length;
+    var ts = (new Date()).getTime();
+    var tsLast = dataSeries.data[m-1].x;
+    var plotLineOptions = {
+        value: dataSeries.data[m-1].x,
+        color: '#fdd',
+        width: 1
+    };
+
+    if ( ts - tsLast < 60 * 1000 ) {
+        if ( dataSeries.data[m-2].y === null ) {
+            var tsLinkEstalished = dataSeries.data[m-1].x;
+            series.addPoint([tsLinkEstalished - 1, 0]);
+            chart.xAxis[0].addPlotLine(plotLineOptions);
+            var tsLinkLost = null;
+            for ( var i = m - 2; i >= 0; i-- ) {
+                if ( dataSeries.data[i].y !== null ) {
+                    tsLinkLost = dataSeries.data[i].x;
+                    break;
+                }
+            }
+            chart.xAxis[0].addPlotBand({
+                from: tsLinkLost,
+                to: tsLinkEstalished,
+                color: '#fdd',
+                //label: { text: '2 мин.' }
+            });
+        }
+        return;
+    }
+
+    if ( n == 0 ) {
+        series.addPoint([tsLast, 0]);
+    }
+    else {
+        series.data[n-1].update(0);
+    }
+    series.addPoint([ts, 0]);
+
+    if ( dataSeries.data[m-1].y !== null ) {
+        chart.xAxis[0].addPlotLine(plotLineOptions);
+    }
+
+    // if still no data received, set values of the parameters to null
+    var params = [ 'top', 'wtop', 'sbop', 'lp', 'trv', 'bcl' ];
+
+    for ( j in params ) {
+        p = params[j];
+        dataSeries = chart.get(p);
+        dataSeries.addPoint([ts, null]);
+    }
+}
+
+function addDataPoints( chart, data ) {
+
+    var params = [ 'top', 'wtop', 'sbop', 'lp', 'trv', 'bcl' ];
+
+    for ( var i = 0; i < data.ts.length; i++ )
+    {
+        for ( var j in params ) {
+            var p = params[j];
+            var point = [ data['ts'][i], data[p][i] ];
+            chart.get(p).addPoint(point, false, false);
+        }
+        var tsLast = data['ts'][data.ts.length-1];
+        chart.get('lost').addPoint([tsLast, null] , false, false);
+    }
+
+    chart.redraw();
+}
+
+function setChartData( data ) {
+
+    var params = [ 'top', 'wtop', 'sbop', 'lp', 'trv', 'bcl' ];
+    var sd = {}; // series data
+
+    for ( var j in params ) {
+        var p = params[j];
+        sd[p] = [];
+        for ( var i = 0; i < data.ts.length; i++ ) {
+            sd[p][i] = [ data['ts'][i], data[p][i] ];
+        }
+    }
+
+    for ( var j in params ) {
+        var p = params[j];
+        var series = chart.get(p);
+        series.setData(sd[p], false);
+
+        if ( p === 'top' )
+            series.setVisible(true);
+    }
+    chart.get('lost').setData(null);
+}
+
 function initChart() {
+    chart = new Highcharts.Chart(chartOptions);
+}
+
+function reloadChart() {
+    if ( chart !== null ) {
+        $('#chart').highcharts().destroy();
+        console.log('chart destroyed');
+    }
     chart = new Highcharts.Chart(chartOptions);
 }

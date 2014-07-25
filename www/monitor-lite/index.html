@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Панель мониторинга МЭК</title>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="/css/bootstrap-theme.min.css">
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="/js/jquery.min.js"></script>
+
+    <!-- jQuery.Color plugin for color animation support -->
+    <script src="/js/jquery.color-2.1.2.min.js"></script>
+
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="/js/bootstrap.min.js"></script>
+
+    <script src="/js/highcharts.js"></script>
+    <script src="/js/no-data-to-display.js"></script>
+
+    <link rel="stylesheet" href="/css/mec-icons.css" />
+
+    <link rel="stylesheet" href="/css/font-days-one.css" />
+    <link rel="stylesheet" href="/css/styles.css" />
+
+    <script src="/js/common.js"></script>
+    <script src="/js/chart.js"></script>
+    <script src="/js/dashboard-common.js"></script>
+    <script src="/js/dashboard-lite.js"></script>
+    <script src="/js/monitor-common.js"></script>
+    <script src="/js/monitor-lite.js"></script>
+
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-xs-12">
+            <div id="info-mec-offline">
+                <h1>Нет связи с МЭК</h1>
+                <p>Последние данные от&nbsp;МЭК были получены более часа назад</p>
+            </div>
+        </div>
+    </div>
+    <div class="row" id="dashboard-lite">
+        <div class="col-md-2 col-sm-4 col-xs-6">
+            <div><span class="icon-lightbulb"></span><span id="lp">64</span></div>
+        </div>
+        <div class="col-md-2 col-sm-4 col-xs-6">
+            <div><span class="icon-battery-60"></span><span id="bcl">50</span>&thinsp;%</div>
+        </div>
+        <div class="col-md-2 col-sm-4 col-xs-6">
+            <div><span class="icon-spinner"></span><span id="trv">55</span></div>
+        </div>
+        <div class="col-md-2 col-sm-4 col-xs-6">
+            <div><span class="icon-flash"></span><span id="top">128</span>&nbsp;<i class="icon-long-arrow-up"></i></div>
+        </div>
+        <div class="col-md-2 col-sm-4 col-xs-6">
+            <div><span class="icon-wind-turbine"></span><span id="wtop">79</span>&nbsp;<i class="icon-long-arrow-up"></i></div>
+        </div>
+        <div class="col-md-2 col-sm-4 col-xs-6">
+            <div><span class="icon-solar-battery"></span><span id="sbop">49</span>&nbsp;<i class="icon-long-arrow-down"></i></div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div id="infoblock-countdown">
+                        <div id="connection-info">
+                            <span class="icon-warning"></span>&nbsp;&nbsp;<span>Связь с МЭК потеряна <span id="info-connection-lost">1</span> мин. назад</span>
+                        </div>
+                        <p><span class="icon-clock"></span> Повторный опрос через <span id="countdown" class="badge">xx</span>&nbsp;с.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <div id="chart"></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<script>
+    $( function() {
+        init();
+    });
+</script>
+</body>
+</html>
