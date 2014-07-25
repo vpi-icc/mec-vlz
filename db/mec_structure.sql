@@ -1,55 +1,62 @@
-
 -- phpMyAdmin SQL Dump
--- version 2.11.4
+-- version 3.5.1
 -- http://www.phpmyadmin.net
 --
--- Host: localhost
--- Generation Time: Jun 09, 2014 at 03:18 PM
--- Server version: 5.1.57
--- PHP Version: 5.2.17
+-- Хост: 127.0.0.1
+-- Время создания: Июл 25 2014 г., 20:26
+-- Версия сервера: 5.5.25
+-- Версия PHP: 5.3.13
 
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
+SET time_zone = "+00:00";
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8 */;
 
 --
--- Database: `a8987760_mec`
+-- База данных: `mec`
 --
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `indications`
+-- Структура таблицы `indications`
 --
 
 DROP TABLE IF EXISTS `indications`;
 CREATE TABLE IF NOT EXISTS `indications` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `pid` int(10) unsigned NOT NULL COMMENT 'point id',
   `TS` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'timestamp',
   `TRV` float NOT NULL COMMENT 'turbine rotating velocity',
-  `TOP` float NOT NULL COMMENT 'turbine output power',
+  `WTOP` float NOT NULL COMMENT 'wind turbine output power',
   `SBOP` float NOT NULL COMMENT 'solar battery output power',
+  `LP` float NOT NULL COMMENT 'load power',
   `BCL` float NOT NULL COMMENT 'battery charge level',
-  `lat` float unsigned DEFAULT NULL COMMENT 'широта',
-  `lon` float unsigned DEFAULT NULL COMMENT 'долгота',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=70 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=49 ;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `points`
+-- Структура таблицы `points`
 --
 
 DROP TABLE IF EXISTS `points`;
 CREATE TABLE IF NOT EXISTS `points` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `pointName` char(40) DEFAULT NULL,
-  `lat` double NOT NULL,
-  `lng` double NOT NULL,
-  `description` char(100) DEFAULT NULL,
-  `active` tinyint(1) NOT NULL DEFAULT '0',
-  `img` char(30) DEFAULT NULL,
-  `datefrom` date DEFAULT NULL,
-  `dateto` date DEFAULT NULL,
-  `filename` text,
+  `name` varchar(255) DEFAULT NULL,
+  `lat` float NOT NULL COMMENT 'latitude',
+  `lon` float NOT NULL COMMENT 'longitude',
+  `description` varchar(255) DEFAULT NULL,
+  `datefrom` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `dateto` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=105 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=7 ;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
