@@ -45,8 +45,8 @@ curl_exec($ch);
 date_default_timezone_set('UTC');
 
 $n = 5;
-$lat = rand(40000, 50000);
-$lon = rand(40000, 50000);
+$lat = rand(48000, 49000);
+$lon = rand(44000, 45000);
 
 for ( $i = -$n; $i <= $n; $i++ )
 {

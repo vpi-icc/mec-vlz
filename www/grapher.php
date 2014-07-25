@@ -6,7 +6,7 @@
  * Time: 23:56
  */
     header("Content-type: text/json");
-    require_once "../config.php";
+    require_once "config.php";
 
     try {
         $pdo = new PDO($dsn, $dbuser, $dbpass);

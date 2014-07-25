@@ -14,11 +14,11 @@ function init() {
     requestData();
 
     // user interface
-    $('#btn-map-show').click( toggleMap );
-    $('#btn-map-hide').click( toggleMap );
+    $('#btn-map-show').click(toggleMap);
+    $('#btn-map-hide').click(toggleMap);
 }
 
-function toggleMap() {
+function toggleMap( evt, latLngCntr ) {
     var altv = [ 'hide', 'show' ];
     var alts = [ 200, 500 ];
     var toggle = $('#btn-map-show').css('display') == 'none';
@@ -36,9 +36,22 @@ function toggleMap() {
     }, {
         complete: function(){
             google.maps.event.trigger(map, 'resize');
+            if ( typeof latLngCntr === 'object' ) {
+                map.setCenter(latLngCntr);
+            }
             b1.fadeOut(500, function(){
                 b2.fadeIn(200);
             });
         }
     });
+}
+
+function hideMap( latLngCntr ) {
+
+    if ( $('#btn-map-show').css('display') == 'none' ) {
+        toggleMap(latLngCntr);
+    }
+    else {
+        map.setCenter(latLngCntr);
+    }
 }

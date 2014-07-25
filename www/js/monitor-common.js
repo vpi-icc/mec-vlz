@@ -36,10 +36,9 @@ function updateConnectionInfoCounter(n) {
 
 
 function getNextIndications(){
-    var url = '/test/grapher.php';
     var gd = chart.get('top').data;
     var tsLast = gd[gd.length-1].x;
-    $.get( url, { tsLast: tsLast / 1000 } )
+    $.get( requestHandler, { tsLast: tsLast / 1000 } )
         .done( function( data ) {
             //data = { ts: 1404161054000, top: 44, wtop: 32, sbop: 15, trv: 6700, bcl: 55 };
             if ( data == null ) {
@@ -78,7 +77,11 @@ function requestData(pid, active) {
         pid = 0;
     }
 
-    $.getJSON('/test/grapher.php?pid=' + pid)
+    if ( typeof active === "undefined" || active === null ) {
+        active = true;
+    }
+
+    $.getJSON(requestHandler + '?pid=' + pid)
         .done( function( json ) {
             if ( json == null ) {
                 $('#chart').hide();
@@ -90,7 +93,7 @@ function requestData(pid, active) {
             setChartData(json);
             //chart.setSize(width, 400);
 
-            if ( active || !pid ) {
+            if ( active && !pid ) {
                 var values = getLastIndications(json);
                 updateIndications(values);
                 setDashboardIndications();
@@ -120,7 +123,7 @@ function requestData(pid, active) {
                 clearInterval(intervalId);
                 dashboard.slideUp(500);
                 $('#infoblock-countdown').slideUp(500);
-                chart.setTitle(chart.options.title, null);
+                chart.setTitle(chart.options.title.text, {text: null});
             }
 
             //var width = chart.container.style.width.slice(0, -2);

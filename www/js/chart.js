@@ -222,7 +222,7 @@ function updateConnectionGraph() {
             chart.xAxis[0].addPlotBand({
                 from: tsLinkLost,
                 to: tsLinkEstalished,
-                color: '#fdd',
+                color: '#fff5f5',
                 //label: { text: '2 мин.' }
             });
         }

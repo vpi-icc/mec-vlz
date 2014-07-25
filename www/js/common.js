@@ -35,3 +35,5 @@ var indications = {
 
 var dashboard = null;
 var intervalId = null;
+
+var requestHandler = '/grapher.php';
